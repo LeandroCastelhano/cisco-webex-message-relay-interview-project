@@ -1,0 +1,31 @@
+info:
+  name: Acknowledge Offline Message
+  type: http
+  seq: 16
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/messages/{{offlineMessageId}}/ack
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenReciever}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 204", function () {
+          expect(res.getStatus()).to.equal(204);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Acknowledge the second message using its own saved ID.
+  Expected status: 204.

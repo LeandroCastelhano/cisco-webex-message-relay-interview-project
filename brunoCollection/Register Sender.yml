@@ -1,0 +1,50 @@
+info:
+  name: Register Sender
+  type: http
+  seq: 2
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/clients
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Maya"
+      }
+  auth: inherit
+
+runtime:
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.token
+        method: jsonq
+      variable:
+        name: TokenSender
+        scope: runtime
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 201", function () {
+          expect(res.getStatus()).to.equal(201);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().name).to.equal("Maya");
+          expect(typeof res.getBody().token).to.equal("string");
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Register Maya and save TokenSender.
+  Expected status: 201.

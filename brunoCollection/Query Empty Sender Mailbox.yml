@@ -1,0 +1,34 @@
+info:
+  name: Query Empty Sender Mailbox
+  type: http
+  seq: 21
+
+http:
+  method: get
+  url: http://127.0.0.1:8080/messages
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenSender}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().length).to.equal(0);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Maya's mailbox should also be empty.
+  Expected status: 200.

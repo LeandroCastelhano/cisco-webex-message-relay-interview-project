@@ -1,0 +1,35 @@
+info:
+  name: Query Sender Messages
+  type: http
+  seq: 19
+
+http:
+  method: get
+  url: http://127.0.0.1:8080/messages
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenSender}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().length).to.equal(1);
+          expect(res.getBody().some(message => message.id === bru.getVar("replyMessageId"))).to.equal(true);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Read Caroline's reply from Maya's mailbox.
+  Expected status: 200.

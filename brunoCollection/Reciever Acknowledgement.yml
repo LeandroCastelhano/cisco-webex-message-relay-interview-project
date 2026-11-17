@@ -1,0 +1,31 @@
+info:
+  name: Reciever Acknowledgement
+  type: http
+  seq: 14
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/messages/{{messageId}}/ack
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenReciever}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 204", function () {
+          expect(res.getStatus()).to.equal(204);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Acknowledge the first message using Caroline's new token.
+  Expected status: 204.

@@ -1,0 +1,49 @@
+info:
+  name: Reconnect Reciever
+  type: http
+  seq: 11
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/clients
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Caroline"
+      }
+  auth: inherit
+
+runtime:
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.token
+        method: jsonq
+      variable:
+        name: TokenReciever
+        scope: runtime
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 201", function () {
+          expect(res.getStatus()).to.equal(201);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().token === bru.getVar("OldTokenReciever")).to.equal(false);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Register Caroline again. Replace TokenReciever but keep OldTokenReciever for the stale-token check.
+  Expected status: 201.

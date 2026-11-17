@@ -1,0 +1,34 @@
+info:
+  name: Sender Acknowledgement
+  type: http
+  seq: 7
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/messages/{{messageId}}/ack
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenSender}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 403", function () {
+          expect(res.getStatus()).to.equal(403);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().code).to.equal("WRONG_RECIPIENT");
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Maya cannot acknowledge Caroline's message. This error is expected.
+  Expected status: 403.

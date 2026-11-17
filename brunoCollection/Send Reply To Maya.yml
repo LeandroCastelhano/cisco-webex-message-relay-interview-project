@@ -1,0 +1,49 @@
+info:
+  name: Send Reply To Maya
+  type: http
+  seq: 18
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/messages
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenReciever}}
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "recipient": "Maya",
+        "body": "Hello Maya, I got your messages. Caroline"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 202) {
+          bru.setVar("replyMessageId", res.getBody().id);
+        }
+    - type: tests
+      code: |-
+        test("Returns 202", function () {
+          expect(res.getStatus()).to.equal(202);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().from).to.equal("Caroline");
+          expect(res.getBody().to).to.equal("Maya");
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Show that Caroline can also send. Save replyMessageId without changing the earlier IDs.
+  Expected status: 202.

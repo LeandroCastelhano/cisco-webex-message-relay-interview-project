@@ -1,0 +1,31 @@
+info:
+  name: Reciever Disconnect
+  type: http
+  seq: 8
+
+http:
+  method: delete
+  url: http://127.0.0.1:8080/session
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenReciever}}
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 204", function () {
+          expect(res.getStatus()).to.equal(204);
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Disconnect Caroline while the first message is still pending.
+  Expected status: 204.

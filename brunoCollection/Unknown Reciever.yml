@@ -1,0 +1,43 @@
+info:
+  name: Unknown Reciever
+  type: http
+  seq: 22
+
+http:
+  method: post
+  url: http://127.0.0.1:8080/messages
+  headers:
+    - name: Authorization
+      value: Bearer {{TokenSender}}
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "recipient": "nobody",
+        "body": "Hello?"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 404", function () {
+          expect(res.getStatus()).to.equal(404);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().code).to.equal("UNKNOWN_RECIPIENT");
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Sending to a name that has never registered is rejected. This error is expected.
+  Expected status: 404.

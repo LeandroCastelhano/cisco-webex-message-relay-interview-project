@@ -1,0 +1,31 @@
+info:
+  name: Health Check
+  type: http
+  seq: 1
+
+http:
+  method: get
+  url: http://127.0.0.1:8080/health
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Returns 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+        test("Checks the response", function () {
+          expect(res.getBody().status).to.equal("ok");
+        });
+
+settings:
+  encodeUrl: false
+  timeout: 5000
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  Confirm the server is running.
+  Expected status: 200.
